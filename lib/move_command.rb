@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# class PlaceCommand wraps logic to put robot at the map on current places
-class PlaceCommand
+# class MoveCommand wraps logic to put robot at the map on current places
+class MoveCommand
 
   def initialize(position, map, robot)
     @position = position
@@ -10,7 +10,14 @@ class PlaceCommand
   end
 
   def run
-    @robot.places = places if @map.valid_position? @position
+    return if @robot.unplaced?
+
+    current_position = @robot.position
+    cloned_current_position = current_position.dup
+
+    cloned_current_position.move
+
+    @robot.position = cloned_current_position if @map.valid_placement?(cloned_current_position)
   end
 
   attr_accessor :position, :robot, :map
