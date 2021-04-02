@@ -4,20 +4,20 @@ require_relative 'report_command'
 require_relative 'robot_command_error'
 
 class Robot
-  def initialize(places = nil)
-    @positions = positions
+  def initialize(position = nil)
+    @position = position
   end
 
   def unplaced?
-    positions.nil?
+    @position.nil?
   end
 
   def report
     raise RobotCommandError if unplaced?
 
-    ReportCommand.new(@positions)
+    ReportCommand.new(@position)
   end
 
-  attr_accessor :places
+  attr_accessor :position
 end
 
