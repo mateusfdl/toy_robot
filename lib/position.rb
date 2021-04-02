@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
-# Position wraps robot face
+# Position wraps robot facing and movement
 class Position
+  DIRECTIONS = %w[
+    NORTH
+    EAST 
+    SOUTH
+    EAST
+].freeze
   
   def initialize(x: 0, y: 0, facing: :north)
     @x = x
@@ -9,9 +15,17 @@ class Position
     @facing = facing
   end
 
-  attr_accessor :x, :y, :facing
+  def turn_right
+    @facing = turn_direction(:right)
+  end
 
-  private
+  def turn_left
+    @facing = turn_direction(:left)
+  end
+
+  def move
+    directions[@facing.to_sym]
+  end
 
   def attr_hash
     {
@@ -21,32 +35,41 @@ class Position
     }
   end
 
-  def face_to
-    case @facing.downcase.to_sym
-    when :north then
-      face_north
-    when :south then
-      face_south
-    when :west then
-      face_west
-    when :east
-      face_east
-    end
+  attr_accessor :x, :y, :facing
+  
+  private
+
+  def turn_direction
+    DIRECTIONS.rotate(rotate_modifier)[DIRECTIONS.index(@facing)]
+  end
+
+  def directions
+    {
+      :NORTH => face_north,
+      :EAST => face_east,
+      :SOUTH => face_south,
+      :WEST => face_west
+    }
+  end
+
+  def rotate_modifier(side)
+    return -1 if side == :left
+    1
   end
 
   def face_north
-    Direction.new(@x, @y, :north)
-  end
-
-  def face_east
-    Direction.new(@x, @y, :east)
-  end
-
-  def face_west
-    Direction.new(@x, @y, :west)
+    @y += 1
   end
 
   def face_south
-    Direction.new(x, y, :south)
+    @y -= 1
+  end
+
+  def face_east
+    @x += 1
+  end
+
+  def face_west
+    @x -= 1
   end
 end
