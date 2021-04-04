@@ -4,14 +4,14 @@
 class Position
   DIRECTIONS = %w[
     NORTH
-    EAST 
-    SOUTH
     EAST
-].freeze
-  
-  def initialize(x: 0, y: 0, facing: :north)
-    @x = x
-    @y= y 
+    SOUTH
+    WEST
+  ].freeze
+
+  def initialize(x_pos: 0, y_pos: 0, facing: 'NORTH')
+    @x = x_pos
+    @y = y_pos
     @facing = facing
   end
 
@@ -24,7 +24,7 @@ class Position
   end
 
   def move
-    directions[@facing.to_sym]
+    send(directions[@facing.to_sym])
   end
 
   def attr_hash
@@ -36,24 +36,25 @@ class Position
   end
 
   attr_accessor :x, :y, :facing
-  
+
   private
 
-  def turn_direction
-    DIRECTIONS.rotate(rotate_modifier)[DIRECTIONS.index(@facing)]
+  def turn_direction(side)
+    DIRECTIONS.rotate(rotate_modifier(side))[DIRECTIONS.index(@facing)]
   end
 
   def directions
     {
-      :NORTH => face_north,
-      :EAST => face_east,
-      :SOUTH => face_south,
-      :WEST => face_west
+      NORTH: 'face_north',
+      EAST: 'face_east',
+      SOUTH: 'face_south',
+      WEST: 'face_west'
     }
   end
 
   def rotate_modifier(side)
     return -1 if side == :left
+
     1
   end
 
