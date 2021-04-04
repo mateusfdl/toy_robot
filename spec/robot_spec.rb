@@ -1,38 +1,35 @@
 # frozen_string_literal: true
 
 require_relative '../lib/robot'
-require_relative  '../lib/report_command'
+require_relative '../lib/robot_command_error'
 require_relative './spec_helper'
 
 RSpec.describe Robot do
-
-  context 'when initialized' do
+  context '#report' do
     context 'and position is nil' do
-      let(:robot) { described_class.new }
+      let(:robot) { Robot.new }
 
-      it 'must return unplaced' do
-        expect(robot.unplaced?).to eq true
-      end
-
-      it 'must raise report error' do
-        expect { robot.report }.to raise_error ArgumentError
+      it 'must raise error' do
+        expect { robot.report }.to raise_error RobotCommandError
       end
     end
 
-    context 'and position is past' do
-      let(:places_hash) { { x: 5, y: 5, facing: 'WEST'} }
-      let(:robot) { described_class.new(places_hash) }
-
-      let(:double_report_instance) { double('Report') }
-
-      it 'must not return unplaced' do
-        expect(robot.unplaced?).to eq false
+    context 'and position' do
+      let(:position) { double 'Position' }
+      let(:attr_hash) do
+        {
+          x: 1,
+          y: 1,
+          facing: 'NORTH'
+        }
       end
 
-      it 'must return Report instance' do
-        allow(ReportCommand).to receive(:new).with(places_hash).and_return(double_report_instance)
-        
-        expect(robot.report).to be double_report_instance
+      let(:robot) { Robot.new(position) }
+
+      it 'must return positions' do
+        allow(position).to receive(:attr_hash).and_return(attr_hash)
+
+        expect(robot.report).to eq(attr_hash.values.join(' '))
       end
     end
   end
