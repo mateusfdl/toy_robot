@@ -1,23 +1,28 @@
-require_relative './lib/parser.rb'
-require_relative './lib/table.rb'
-require_relative './lib/robot.rb'
+# frozen_string_literal: true
 
-table = Map.new(5,5)
+require_relative './lib/map'
+require_relative './lib/robot'
+require_relative './lib/factory_method'
+
+map = Map.new(5, 5)
 robot = Robot.new
-#factory_method = FactoryMethod.new(robot, table)
+factory_method = FactoryMethod.new(map, robot)
 
-puts <<-INSTRUCTIONS
-COOMANDS ALLOWED
- PLACE X,Y,Z
- MOVE ( LEFT RIGHT )
- REPORT
+puts <<~INSTRUCTIONS
+  COOMANDS ALLOWED
+   PLACE X Y FACING
+   MOVE ( LEFT or RIGHT )
+   REPORT
 INSTRUCTIONS
 
 loop do
-  print '> ',  _ = gets.chomp
+  print '> '
 
-#  parsed_input = Parser.parse(_)
-#
-#  factory_method.run(parsed_input)
-  return if _ == 'exit'
+  input = gets.chomp
+
+  return if input =~ /EXIT/
+
+  command = factory_method.parse input
+
+  command&.run
 end
