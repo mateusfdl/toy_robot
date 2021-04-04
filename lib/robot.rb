@@ -1,23 +1,22 @@
 # frozen_string_literal: true
 
-require_relative 'report_command'
 require_relative 'robot_command_error'
 
+# Robot class implements a robot
 class Robot
   def initialize(position = nil)
     @position = position
+  end
+
+  def report
+    raise RobotCommandError if unplaced?
+
+    @position.attr_hash.values.join(' ')
   end
 
   def unplaced?
     @position.nil?
   end
 
-  def report
-    raise RobotCommandError if unplaced?
-
-    ReportCommand.new(@position)
-  end
-
   attr_accessor :position
 end
-
